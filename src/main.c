@@ -1,15 +1,17 @@
 #include "print.h"
 #include "string.h"
+#include "multiboot.h"
 
 static void printn(int n) {
     if (n/10) printn(n/10);
     kputchar(n%10 + '0');
 }
 
-void kmain(void) {
+void kmain(multiboot_info_t* mbd, unsigned int magic) {
     memset((void*)0xb8000, 0, 4000);
-    for (int i = 0; ; i++) {
-        printn(i);
-        kputchar('\n');
+    if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        kputs("Invalid magic!");
+        return;
     }
+    kputs("Valid magic!");
 }
