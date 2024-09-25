@@ -2,7 +2,7 @@ CC = gcc
 LD = ld
 
 CFLAGS = -m32 -std=c11 -nostdinc -nostdlib -ffreestanding -pedantic -Wall -Wextra -O2
-LDFLAGS = -melf_i386 -znoexecstack -Tsrc/pandora.ld
+LDFLAGS = -melf_i386 -znoexecstack -Tsrc/multiboot.ld
 
 SRCS = $(wildcard src/*.S src/*.c)
 OBJS = $(patsubst %.c,%.o,$(patsubst %.S,%.o,$(SRCS)))
