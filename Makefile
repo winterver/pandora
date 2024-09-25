@@ -12,7 +12,7 @@ TARGET = pandora.bin
 QEMU = qemu-system-x86_64.exe
 QFLAGS = -net none
 
-all: $(OBJS) $(TARGET)
+all: $(TARGET)
 
 %.o: %.c
 	@echo Compiling $<
@@ -33,5 +33,7 @@ run: $(TARGET)
 clean:
 	@rm $(OBJS) 2> /dev/null || true
 
-distclean: clean
+distclean:
 	@rm $(TARGET) 2> /dev/null || true
+
+cleanall: clean distclean
