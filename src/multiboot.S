@@ -44,16 +44,15 @@ _start:
      * */
     mov $stack_top, %esp
 
-    /* Enter kernel. GRUB provided a pointer to multiboot_info_t in ebx and
-     * a magic number in eax for verification.
-     * Note: System V ABI and the compiler requires the stack be aligned to
-     * 16 bytes.
-     * */
+    /* Note: System V ABI and the compiler requires the stack be aligned to
+     * 16 bytes. So align the stack before entering C code! */
+    and $-16, %esp
     sub $16, %esp
+    /* GRUB provided a pointer to multiboot_info_t in ebx and a magic number
+     * in eax for verification. */
     mov %eax, 4(%esp)
     mov %ebx, (%esp)
     call kmain
-    add $16, %esp
 
     /* In case kmain() retunrns */
     cli     /* Disable interrupts */
