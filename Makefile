@@ -28,6 +28,7 @@ subprojs:
 $(TARGET): $(OBJS)
 	@echo Linking $(TARGET)
 	@$(LD) $(LDFLAGS) $(OBJS) -o $(TARGET)
+	@chmod -x $(TARGET)
 
 run: all
 	@mkdir -p vfat

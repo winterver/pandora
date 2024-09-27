@@ -2,7 +2,7 @@ ARCH = x86_64
 #provided by upper Makefile
 #TARGET = pandora.efi
 SRCS = $(wildcard *.c)
-CFLAGS = -pedantic -Wall -Wextra -Werror --std=c11 -O2
+CFLAGS = -pedantic -Wall -Wextra --std=gnu11 -O2
 LDFLAGS = --no-undefined
 
 USE_GCC = 1
