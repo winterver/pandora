@@ -1,8 +1,3 @@
-    /* The stack on x86 must be 16-byte aligned according to the System V
-     * ABI standard and de-facto extensions. The compiler will assume the
-     * stack is properly aligned and failure to align the stack will result
-     * in undefined behavior.
-     * */
     .section .bss
     .align 16
     .skip 16384 # 16 KiB
@@ -12,35 +7,15 @@ stack_top:
     .global _start
     .type _start, @function
 _start:
-    /* The bootloader has loaded us into 32-bit protected mode.
-     * The processor state is as defined in the multiboot standard.
-     * The kernel now has absolute and complete power over the machine.
-     * Interrupts are disabled.
-     * Paging is disabled.
-     * */
+    mov $stack_top, %rsp
 
-    /* This is a good place to initialize crucial processor state before the
-     * high-level kernel is entered. It's best to minimize the early environ
-     * -ment where crucial features are offline.
-     * Note that the processor is not fully initialized yet: Features such
-     * as floating point instructions and instruction set extensions are not
-     * initialized yet.
-     * The GDT should be loaded here.
-     * Paging should be enabled here.
-     * */
-    mov $stack_top, %esp
-
-    /* Note: System V ABI and the compiler requires the stack be aligned to
+    /* Note: the compiler requires the stack be aligned to
      * 16 bytes. So align the stack before entering C code. */
-    and $-16, %esp
-    sub $16, %esp
+    and $-16, %rsp
+    sub $16, %rsp
     call kmain
 
     /* In case kmain() retunrns */
     cli     /* Disable interrupts */
 1:  hlt     /* Pause CPU, until an interrupt occurs */
     jmp 1b  /* Loop in case a non-maskable interrupt occurs */
-
-    /* Set the size of the _start symbol. This is useful when debugging
-     * or when you implement call tracing. */
-    .size _start, . - _start
