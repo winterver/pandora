@@ -1,9 +1,15 @@
-.set ALIGN,    1<<0     /* align loaded modules on page boundaries */
-.set MEMINFO,  1<<1     /* provide memory map */
+.set ALIGN,     1<<0     /* align loaded modules on page boundaries */
+.set MEMINFO,   1<<1     /* provide memory map */
+.set VIDEOMODE, 1<<2     /* set and provide video mode info */
 
-.set MAGIC,    0x1BADB002
-.set FLAGS,    ALIGN | MEMINFO
-.set CHECKSUM, -(MAGIC + FLAGS)
+.set MAGIC,     0x1BADB002
+.set FLAGS,     ALIGN | MEMINFO | VIDEOMODE
+.set CHECKSUM,  -(MAGIC + FLAGS)
+
+.set MODE,      0       /* 0 for graphics, 1 for text */
+.set WIDTH,     1360
+.set HEIGHT,    768
+.set DEPTH,     32      /* num of bits per pixel */
 
     .section .multiboot
     .align 4
@@ -11,6 +17,15 @@ multiboot:
     .long MAGIC
     .long FLAGS
     .long CHECKSUM
+    .long 0
+    .long 0
+    .long 0
+    .long 0
+    .long 0
+    .long MODE
+    .long WIDTH
+    .long HEIGHT
+    .long DEPTH
 
     /* The stack on x86 must be 16-byte aligned according to the System V
      * ABI standard and de-facto extensions. The compiler will assume the

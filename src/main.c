@@ -2,6 +2,7 @@
 #include "string.h"
 #include "multiboot.h"
 
+/*
 static void printn(int n) {
     if (n/10) printn(n/10);
     kputchar(n%10 + '0');
@@ -14,4 +15,8 @@ void kmain(multiboot_info_t* mbd, unsigned int magic) {
         return;
     }
     kputs("Valid magic!");
+}
+*/
+
+void kmain() {
 }
