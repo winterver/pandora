@@ -15,31 +15,24 @@ QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
 all: subprojs $(TARGET)
 
 subprojs:
-	@cd efi && make -s TARGET=$(basename $(TARGET)).efi
+	$(MAKE) -C efi
 
 %.o: %.c
-	@echo Compiling $<
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.S
-	@echo Compiling $<
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(OBJS)
-	@echo Linking $(TARGET)
-	@$(LD) $(LDFLAGS) $(OBJS) -o $(TARGET)
-	@chmod -x $(TARGET)
+	$(LD) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
 run: all
-	@mkdir -p vfat
-	@cp -u $(TARGET) vfat
-	@cp -u efi/$(basename $(TARGET)).efi vfat
-	@$(QEMU) $(QFLAGS) -drive file=fat:rw:vfat,format=raw
+	mkdir -p vfat
+	cp -u $(TARGET) vfat
+	cp -u efi/*.efi vfat
+	$(QEMU) $(QFLAGS) -drive file=fat:rw:vfat,format=raw
 
 clean:
-	@rm $(OBJS) 2> /dev/null || true
-
-distclean:
-	@rm $(TARGET) 2> /dev/null || true
-
-cleanall: clean distclean
+	$(MAKE) -C efi clean
+	rm $(OBJS) 2> /dev/null || true
+	rm $(TARGET) 2> /dev/null || true
