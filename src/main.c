@@ -1,6 +1,5 @@
 #include "print.h"
 #include "string.h"
-#include "multiboot.h"
 
 /*
 static void printn(int n) {
