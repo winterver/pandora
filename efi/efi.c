@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 
     if (ehdr.e_shnum == 0) {
         printf("can't load %s: no section or "
-               "too much sections (>= %d)\n",
+               "too many sections (>= %d)\n",
                argv[1], SHN_LORESERVE);
         return -1;
     }
@@ -42,19 +42,11 @@ int main(int argc, char* argv[]) {
         if (shdr.sh_type == SHT_NOBITS || shdr.sh_addr == 0)
             continue;
 
-        /*
-        printf("%02d\t0x%x\t0x%x\t0x%x\n", i,
-               shdr.sh_offset,
-               shdr.sh_addr,
-               shdr.sh_size);
-        */
-        seek_read(f,
-            shdr.sh_offset,
-            (void*)shdr.sh_addr,
-            shdr.sh_size);
+        seek_read(f, shdr.sh_offset, (void*)shdr.sh_addr, shdr.sh_size);
     }
 
     exit_bs();
+
     asm("mov %0, %%rax\n\t"
         "jmp *%%rax\n"
         :
