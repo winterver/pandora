@@ -1,7 +1,8 @@
 CC = gcc
 LD = ld
 
-CFLAGS = -std=c11 -nostdinc -nostdlib -ffreestanding -pedantic -Wall -Wextra -O2
+CFLAGS = -std=c11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
+		 -O2 -ffreestanding -fno-asynchronous-unwind-tables
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
 
 SRCS = $(wildcard src/*.S src/*.c)
