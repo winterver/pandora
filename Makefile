@@ -31,9 +31,9 @@ $(TARGET): $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
 run: all
-	mkdir -p vfat
-	cp -u $(TARGET) vfat
-	cp -u efi/*.efi vfat
+	mkdir -p vfat/efi/boot
+	cp -u $(TARGET) vfat/
+	cp -u efi/*.efi vfat/efi/boot/bootx64.efi
 	$(QEMU) $(QFLAGS) -drive file=fat:rw:vfat,format=raw
 
 clean:

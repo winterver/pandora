@@ -19,15 +19,10 @@ void jump_to_kernel(Elf64_Addr entry, struct bootinfo* bi) {
 }
 
 __attribute__((noreturn))
-void load_and_enter_kernel(int argc, char* argv[], struct bootinfo* bi) {
-    if (argc < 2) {
-        printf("usage: elfload <elf_file>\n");
-        exit(-1);
-    }
-
-    FILE* f = fopen(argv[1], "r");
+void load_and_enter_kernel(char* path, struct bootinfo* bi) {
+    FILE* f = fopen(path, "r");
     if (f == NULL) {
-        printf("no such file: %s\n", argv[1]);
+        printf("Cannot find kernel: %s\n", path);
         exit(-1);
     }
 
@@ -36,14 +31,14 @@ void load_and_enter_kernel(int argc, char* argv[], struct bootinfo* bi) {
 
     char verify[] = { 0x7f, 'E', 'L', 'F', ELFCLASS64 };
     if (memcmp(ehdr.e_ident, verify, sizeof(verify))) {
-        printf("not an ELF64 file: %s\n", argv[1]);
+        printf("Not an ELF64 file: %s\n", path);
         exit(-1);
     }
 
     if (ehdr.e_shnum == 0) {
-        printf("can't load %s: no section or "
+        printf("Can't load %s: no section or "
                "too many sections (>= %d)\n",
-               argv[1], SHN_LORESERVE);
+               path, SHN_LORESERVE);
         exit(-1);
     }
 
@@ -58,6 +53,7 @@ void load_and_enter_kernel(int argc, char* argv[], struct bootinfo* bi) {
         seek_read(f, shdr.sh_offset, (void*)shdr.sh_addr, shdr.sh_size);
     }
 
+    fclose(f);
     exit_bs();
 
     jump_to_kernel(ehdr.e_entry, bi);
@@ -81,7 +77,7 @@ struct bootinfo* boot_service() {
     if (status == EFI_NOT_STARTED) {
         status = gop->SetMode(gop, 0);
         if (EFI_ERROR(status)) {
-            printf("Unable to get native mode\n");
+            printf("Unable to start GOP\n");
             exit(-1);
         }
     }
@@ -116,10 +112,12 @@ struct bootinfo* boot_service() {
 }
 
 int main(int argc, char* argv[]) {
+    (void)argc;
+    (void)argv;
     struct bootinfo* bi = boot_service();
     if (bi->vid_format == VID_FORMAT_UNKNOWN) {
-        printf("unsupported pixel format\n");
+        printf("Unsupported pixel format\n");
         return -1;
     }
-    load_and_enter_kernel(argc, argv, bi);
+    load_and_enter_kernel("pandora.bin", bi);
 }
