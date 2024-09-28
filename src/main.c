@@ -1,5 +1,6 @@
-#include "print.h"
-#include "string.h"
+#include <print.h>
+#include <string.h>
+#include <boot/bootinfo.h>
 
 /*
 static void printn(int n) {
@@ -17,5 +18,8 @@ void kmain(multiboot_info_t* mbd, unsigned int magic) {
 }
 */
 
-void kmain() {
+void kmain(struct bootinfo* bi, int magic) {
+    if (magic == BI_MAGIC) {
+        while (1);
+    }
 }

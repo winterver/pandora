@@ -7,12 +7,17 @@ stack_top:
     .global _start
     .type _start, @function
 _start:
+    /* rbx = struct bootinfo* */
+    /* rcx = BI_MAGIC */
+
     mov $stack_top, %rsp
 
     /* Note: the compiler requires the stack be aligned to
      * 16 bytes. So align the stack before entering C code. */
     and $-16, %rsp
     sub $16, %rsp
+    mov %rbx, %rdi
+    mov %rcx, %rsi
     call kmain
 
     /* In case kmain() retunrns */

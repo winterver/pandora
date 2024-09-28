@@ -1,5 +1,5 @@
 ARCH = x86_64
-CFLAGS = -pedantic -Wall -Wextra --std=gnu11 -O2
+CFLAGS = --std=gnu11 -pedantic -Wall -Wextra -I../include -O2
 LDFLAGS = --no-undefined
 SRCS = $(wildcard *.c)
 TARGET = pandora.efi
