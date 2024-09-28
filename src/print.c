@@ -2,6 +2,8 @@
 #include <string.h>
 #include <boot/bootinfo.h>
 
+#define FW 8
+#define FH 16
 extern char font_vga[4096];
 
 static int* vid; // video address
@@ -12,15 +14,10 @@ static int bg;
 static void put(int x, int y, char c) {
     int* v = vid + x + y * ppl;
     char* f = font_vga + c * 16;
-    for (int i = 0; i < 16; i++) {
-        v[0] = f[i] & (1 << 7) ? fg : bg;
-        v[1] = f[i] & (1 << 6) ? fg : bg;
-        v[2] = f[i] & (1 << 5) ? fg : bg;
-        v[3] = f[i] & (1 << 4) ? fg : bg;
-        v[4] = f[i] & (1 << 3) ? fg : bg;
-        v[5] = f[i] & (1 << 2) ? fg : bg;
-        v[6] = f[i] & (1 << 1) ? fg : bg;
-        v[7] = f[i] & (1 << 0) ? fg : bg;
+    for (int i = 0; i < FH; i++) {
+        for (int j = 0; j < FW; j++) {
+            v[j] = f[i] & (1 << (FW-j-1)) ? fg : bg;
+        }
         v += ppl;
     }
 }
@@ -43,9 +40,10 @@ void init_video(struct bootinfo* bi) {
 
 void kputchar(char c) {
     if (c == '\r') { x = 0; return; }
+    if (c == '\t') { x += 8*(FW+1); return; }
     if (c == '\n') { x = 0; y += 16; return; }
     put(x, y, c);
-    x += 9;
+    x += FW+1;
 }
 
 void kputs(const char* s) {

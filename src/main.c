@@ -16,5 +16,7 @@ void kmain(struct bootinfo* bi, int magic) {
     init_video(bi);
 
     kputs("Hello World!");
-    printn(233); kputchar('\n');
+    for (int i = 0; ; i++) {
+        printn(i); kputchar('\r');
+    }
 }
