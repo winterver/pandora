@@ -40,11 +40,6 @@ SECTIONS
         *(.bss)
     }
 
-    .got.plt BLOCK(4K) : ALIGN(4K)
-    {
-        *(.got.plt)
-    }
-
     /* Sections that are not referenced above are appended here.
      * The linker won't discard them. */
 }
