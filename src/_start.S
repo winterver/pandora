@@ -8,7 +8,6 @@ stack_top:
     .type _start, @function
 _start:
     /* rbx = struct bootinfo* */
-    /* rcx = BI_MAGIC */
 
     mov $stack_top, %rsp
 
@@ -17,7 +16,6 @@ _start:
     and $-16, %rsp
     sub $16, %rsp
     mov %rbx, %rdi
-    mov %rcx, %rsi
     call kmain
 
     /* In case kmain() retunrns */

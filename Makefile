@@ -2,11 +2,14 @@ CC = gcc
 LD = ld
 
 CFLAGS = -std=c11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
-		 -O2 -ffreestanding -fno-asynchronous-unwind-tables
+         -O2 -ffreestanding -fno-asynchronous-unwind-tables
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
 
-SRCS = $(wildcard src/*.S src/*.c)
-OBJS = $(patsubst %.c,%.o,$(patsubst %.S,%.o,$(SRCS)))
+SRCS = $(wildcard src/*.S	\
+                  src/*.c)
+OBJS = $(patsubst %.c,%.o,	\
+       $(patsubst %.S,%.o,	\
+       $(SRCS)))
 TARGET = pandora.bin
 
 # postfixing with .exe for WSL

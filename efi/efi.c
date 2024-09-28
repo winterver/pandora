@@ -9,16 +9,13 @@ void seek_read(FILE* f, size_t pos, void* buf, size_t n) {
 
 __attribute__((naked, noreturn))
 void jump_to_kernel(Elf64_Addr entry, struct bootinfo* bi) {
-    asm("mov %2, %%rcx\n\t"
-        "mov %1, %%rbx\n\t"
+    asm("mov %1, %%rbx\n\t"
         "mov %0, %%rax\n\t"
         "jmp *%%rax\n"
         ::"r"(entry),
-          "r"(bi),
-          "i"(BI_MAGIC)
+          "r"(bi)
          :"rax",
-          "rbx",
-          "rcx");
+          "rbx");
 }
 
 __attribute__((noreturn))

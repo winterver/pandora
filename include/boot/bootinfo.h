@@ -1,7 +1,6 @@
 #ifndef _PANDORA_BOOTINFO_H_
 #define _PANDORA_BOOTINFO_H_
 
-#define BI_MAGIC            0x29bc2e0a
 #define VID_FORMAT_UNKNOWN  0
 #define VID_FORMAT_RGB32    1
 #define VID_FORMAT_BGR32    2

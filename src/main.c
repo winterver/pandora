@@ -7,12 +7,7 @@ static void printn(int n) {
     kputchar(n%10 + '0');
 }
 
-void kmain(struct bootinfo* bi, int magic) {
-    if (magic != BI_MAGIC) {
-        memset(bi->vid_addr, 255, bi->vid_size);
-        return;
-    }
-
+void kmain(struct bootinfo* bi) {
     init_video(bi);
 
     kputs("Hello World!");
