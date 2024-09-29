@@ -1,6 +1,6 @@
 #include <print.h>
 #include <string.h>
-#include <boot/bootinfo.h>
+#include <bootinfo.h>
 
 static void printn(int n) {
     if (n/10) printn(n/10);
