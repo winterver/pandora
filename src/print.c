@@ -1,6 +1,6 @@
 #include <print.h>
 #include <string.h>
-#include <boot/bootinfo.h>
+#include <bootinfo.h>
 
 #define FW 8
 #define FH 16
