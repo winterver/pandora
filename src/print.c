@@ -4,6 +4,7 @@
 
 #define FW 8
 #define FH 16
+#define GAP 1
 extern char font_vga[4096];
 
 static int* vid; // video address
@@ -38,12 +39,26 @@ void init_video(struct bootinfo* bi) {
     x = y = 0;
 }
 
+static void nextline() {
+    x = 0;
+    if ((y + FH) <= (h - FH)) y += FH;
+    else memcpy(vid, vid+FH*ppl, 4*(h-FH)*ppl);
+}
+
+static void nextcolumn(int col) {
+    for (int i = 0; i < col; i++) {
+        x += FW;
+        if (x <= (w - FW)) x += GAP;
+        if (x > (w - FW)) nextline();
+    }
+}
+
 void kputchar(char c) {
     if (c == '\r') { x = 0; return; }
-    if (c == '\t') { x += 8*(FW+1); return; }
-    if (c == '\n') { x = 0; y += 16; return; }
+    if (c == '\t') { nextcolumn(8); return; }
+    if (c == '\n') { nextline(); return; }
     put(x, y, c);
-    x += FW+1;
+    nextcolumn(1);
 }
 
 void kputs(const char* s) {

@@ -10,8 +10,7 @@ static void printn(int n) {
 void kmain(struct bootinfo* bi) {
     init_video(bi);
 
-    kputs("Hello World!");
     for (int i = 0; ; i++) {
-        printn(i); kputchar('\r');
+        printn(i); //kputchar('\r');
     }
 }
