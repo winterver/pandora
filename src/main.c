@@ -1,4 +1,4 @@
-#include <bootinfo.h>
+#include <boot.h>
 #include <printk.h>
 
 void kmain(struct bootinfo* bi) {

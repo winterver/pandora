@@ -1,6 +1,6 @@
 #include <uefi.h>
 #include <linux/elf.h>
-#include <bootinfo.h>
+#include <boot.h>
 
 void seek_read(FILE* f, size_t pos, void* buf, size_t n) {
     fseek(f, pos, SEEK_SET);

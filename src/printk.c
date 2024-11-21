@@ -1,7 +1,7 @@
 #include <printk.h>
 #include <string.h>
-#include <bootinfo.h>
 #include <vsnprintf.h>
+#include <boot.h>
 
 #define FW 8
 #define FH 16
