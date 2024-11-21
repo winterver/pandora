@@ -2,7 +2,8 @@ CC = gcc
 LD = ld
 
 CFLAGS = -std=c11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
-         -O2 -ffreestanding -fno-asynchronous-unwind-tables
+         -O2 -ffreestanding -fno-asynchronous-unwind-tables \
+		 -fno-stack-protector
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
 
 SRCS = $(wildcard src/*.S	\
@@ -12,9 +13,10 @@ OBJS = $(patsubst %.c,%.o,	\
        $(SRCS)))
 TARGET = pandora.bin
 
-# postfixing with .exe for WSL
-QEMU = qemu-system-x86_64.exe
-QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
+#QEMU = qemu-system-x86_64.exe
+#QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
+QEMU = qemu-system-x86_64
+QFLAGS = -net none -bios /usr/share/ovmf/x64/OVMF.4m.fd
 
 all: subprojs $(TARGET)
 

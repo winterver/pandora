@@ -3,7 +3,6 @@
 
 struct bootinfo;
 void init_video(struct bootinfo* bi);
-void kputchar(char c);
-void kputs(const char* s);
+int printk(const char* fmt, ...);
 
 #endif

@@ -1,6 +1,7 @@
-#include <print.h>
+#include <printk.h>
 #include <string.h>
 #include <bootinfo.h>
+#include <vsnprintf.h>
 
 #define FW 8
 #define FH 16
@@ -53,7 +54,7 @@ static void nextcolumn(int col) {
     }
 }
 
-void kputchar(char c) {
+static void putc(char c) {
     if (c == '\r') { x = 0; return; }
     if (c == '\t') { nextcolumn(8); return; }
     if (c == '\n') { nextline(); return; }
@@ -61,7 +62,20 @@ void kputchar(char c) {
     nextcolumn(1);
 }
 
-void kputs(const char* s) {
-    while (*s) kputchar(*s++);
-    kputchar('\n');
+static void puts(const char* s) {
+    while (*s) putc(*s++);
+}
+
+int printk(const char* fmt, ...) {
+    char buf[1024];
+    va_list list;
+    int n;
+
+    va_start(list, fmt);
+    n = vsnprintf(buf, sizeof(buf), fmt, list);
+    va_end(list);
+
+    puts(buf);
+
+    return n;
 }
