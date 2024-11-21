@@ -3,7 +3,7 @@ LD = ld
 
 CFLAGS = -std=c11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
          -O2 -ffreestanding -fno-asynchronous-unwind-tables \
-		 -fno-stack-protector
+		 -fno-stack-protector -Werror=format
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
 
 SRCS = $(wildcard src/*.S	\
