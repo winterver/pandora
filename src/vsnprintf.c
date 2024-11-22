@@ -22,6 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
  * THE SOFTWARE.
  */
+
+/**
+ * File              : vsnprintf.c
+ * Author            : MrBadNews
+ * Date              : 2018
+ * Last Modified Date: 
+ * Last Modified By  : 
+ */
+
 #include <stddef.h>     // for size_t
 #include <stdarg.h>     // for va_args
 
