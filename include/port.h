@@ -21,22 +21,71 @@
  */
 
 /**
- * File              : printk.h
+ * File              : port.h
  * Author            : winterver
- * Date              : 2024.9.26~
+ * Date              : 2024.11.23
  * Last Modified Date: 2024.11.23
  * Last Modified By  : winterver
  */
 
-#ifndef _PANDORA_PRINT_H_
-#define _PANDORA_PRINT_H_
+#ifndef _PANDORA_PORT_H_
+#define _PANDORA_PORT_H_
+#include <types.h>
 
-struct bootinfo;
-void init_video(struct bootinfo* bi);
-int init_serial();
-char serial_getch();
+inline __u8
+inb(__u16 p)
+{
+    __u8 ret;
+    asm volatile ("inb %%dx, %%al":"=a"(ret):"d"(p));
+    return ret;
+}
 
-int printk(const char* fmt, ...)
-    __attribute__((format(printf, 1, 2)));
+inline __u16
+inw(__u16 p)
+{
+    __u16 ret;
+    asm volatile ("inw %%dx, %%ax":"=a"(ret):"d"(p));
+    return ret;
+}
+
+inline __u32
+ind(__u16 p)
+{
+    __u32 ret;
+    asm volatile ("ind %%dx, %%eax":"=a"(ret):"d"(p));
+    return ret;
+}
+
+inline __u64
+inq(__u16 p)
+{
+    __u64 ret;
+    asm volatile ("inq %%dx, %%rax":"=a"(ret):"d"(p));
+    return ret;
+}
+
+inline void
+outb(__u16 p, __u8 v)
+{
+    asm volatile ("outb %%al, %%dx"::"d"(p),"a"(v));
+}
+
+inline void
+outw(__u16 p, __u16 v)
+{
+    asm volatile ("outw %%ax, %%dx"::"d"(p),"a"(v));
+}
+
+inline void
+outd(__u16 p, __u32 v)
+{
+    asm volatile ("outd %%eax, %%dx"::"d"(p),"a"(v));
+}
+
+inline void
+outq(__u16 p, __u64 v)
+{
+    asm volatile ("outq %%rax, %%dx"::"d"(p),"a"(v));
+}
 
 #endif

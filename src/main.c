@@ -24,17 +24,26 @@
  * File              : main.c
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.22
+ * Last Modified Date: 2024.11.23
  * Last Modified By  : winterver
  */
 
 #include <boot.h>
 #include <printk.h>
+#include <port.h>
 
 void kmain(struct bootinfo* bi) {
     init_video(bi);
+    
+    if (init_serial() < 0)
+        printk("init_serial() fail!\n");
+    else
+        printk("init_serial() success!\n");
 
-    for (int i = 0; ; i++) {
-        printk("%0*d\r", 10, i);
+    printk("Hello World!\n");
+    printk("I will echo your input.\n");
+
+    while (1) {
+        printk("%c", serial_getch());
     }
 }

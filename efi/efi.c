@@ -24,7 +24,7 @@
  * File              : efi.c
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.22
+ * Last Modified Date: 2024.11.23
  * Last Modified By  : winterver
  */
 
@@ -77,8 +77,13 @@ void load_and_enter_kernel(char* path, struct bootinfo* bi) {
 
         Elf64_Shdr shdr;
         seek_read(f, pos, &shdr, sizeof(shdr));
-        if (shdr.sh_type == SHT_NOBITS || shdr.sh_addr == 0)
+
+        if (shdr.sh_addr == 0 || shdr.sh_size == 0)
             continue;
+        if (shdr.sh_type == SHT_NOBITS) {
+            memset((void*)shdr.sh_addr, 0, shdr.sh_size);
+            continue;
+        }
 
         seek_read(f, shdr.sh_offset, (void*)shdr.sh_addr, shdr.sh_size);
     }

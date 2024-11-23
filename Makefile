@@ -1,7 +1,7 @@
 CC = gcc
 LD = ld
 
-CFLAGS = -std=c11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
+CFLAGS = -std=gnu11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
          -O2 -ffreestanding -fno-asynchronous-unwind-tables \
 		 -fno-stack-protector -Werror=format
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
@@ -16,7 +16,7 @@ TARGET = pandora.bin
 #QEMU = qemu-system-x86_64.exe
 #QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
 QEMU = qemu-system-x86_64
-QFLAGS = -net none -bios /usr/share/ovmf/x64/OVMF.4m.fd
+QFLAGS = -nographic -net none -bios /usr/share/ovmf/x64/OVMF.4m.fd
 
 all: subprojs $(TARGET)
 

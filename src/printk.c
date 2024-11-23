@@ -24,14 +24,15 @@
  * File              : printk.c
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.22
+ * Last Modified Date: 2024.11.23
  * Last Modified By  : winterver
  */
 
+#include <boot.h>
 #include <printk.h>
 #include <string.h>
 #include <vsnprintf.h>
-#include <boot.h>
+#include <port.h>
 
 #define FW 8
 #define FH 16
@@ -54,6 +55,7 @@ static void put(int x, int y, char c) {
     }
 }
 
+static int vidinit;
 static int w, h;
 static int x, y;
 
@@ -68,6 +70,7 @@ void init_video(struct bootinfo* bi) {
     w = bi->vid_width;
     h = bi->vid_height;
     x = y = 0;
+    vidinit = 1;
 }
 
 static void nextline() {
@@ -84,12 +87,53 @@ static void nextcolumn(int col) {
     }
 }
 
+
+/* COM1 */
+#define PORT 0x3f8
+
+static int serinit;
+
+int init_serial() {
+    outb(PORT + 1, 0x00); /* disable interrupts */
+    outb(PORT + 3, 0x80); /* enable DLAB (set baud rate divisor) */
+    outb(PORT + 0, 0x03); /* set divisor to 3 (lo byte), baud rate: 38400 */
+    outb(PORT + 1, 0x00); /* hi byte of the divisor */
+    outb(PORT + 3, 0x03); /* 8 bits, no parity, one stop bit */
+    outb(PORT + 2, 0xc7); /* enable fifo, clear them, with 14-byte threshold */
+    outb(PORT + 4, 0x0b); /* enable irq, set rts/dsr */
+
+    outb(PORT + 4, 0x1e); /* set loop back mode */
+    outb(PORT + 0, 0xae); /* send test byte, should return same byte */
+    if (inb(PORT + 0) != 0xae) {
+        return -1;
+    }
+
+    outb(PORT + 4, 0x0f); /* disable loop back mode */
+    serinit = 1;
+    return 0;
+}
+
+static void serial_putc(char c) {
+    while ((inb(PORT + 5) & 0x20) == 0);
+    outb(PORT, c);
+}
+
+char serial_getch() {
+    while ((inb(PORT + 5) & 0x01) == 0);
+    return inb(PORT);
+}
+
+
 static void putc(char c) {
-    if (c == '\r') { x = 0; return; }
-    if (c == '\t') { nextcolumn(8); return; }
-    if (c == '\n') { nextline(); return; }
-    put(x, y, c);
-    nextcolumn(1);
+    if (vidinit) {
+        if (c == '\r') { x = 0; return; }
+        if (c == '\t') { nextcolumn(8); return; }
+        if (c == '\n') { nextline(); return; }
+        put(x, y, c);
+        nextcolumn(1);
+    }
+    if (serinit)
+        serial_putc(c);
 }
 
 static void puts(const char* s) {
