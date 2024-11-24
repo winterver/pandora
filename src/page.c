@@ -21,33 +21,37 @@
  */
 
 /**
- * File              : main.c
+ * File              : page.c
  * Author            : winterver
- * Date              : 2024.9.26~
+ * Date              : 2024.11.24
  * Last Modified Date: 2024.11.24
  * Last Modified By  : winterver
  */
 
-#include <boot.h>
-#include <printk.h>
 #include <types.h>
 
-void install_gdt();
-void install_idt();
-void install_paging();
+static __u64 pml4t[512] __attribute__((aligned(0x1000)));
+static __u64 pdpt[512] __attribute__((aligned(0x1000)));
 
-void kmain(struct bootinfo* bi) {
-    init_video(bi);
+static __u64 pdt[512] __attribute__((aligned(0x1000)));
+static __u64 pt1[512] __attribute__((aligned(0x1000)));
+static __u64 pt2[512] __attribute__((aligned(0x1000)));
 
-    // gdt, irq, paging, my own long mode
-    // allocator, process, scheduler,
-    // mirco kernel!!
+void install_paging() {
+    pml4t[0] = (__u32)pdpt + 3;
+    pdpt[0] = (__u32)pdt + 3;
 
-    install_gdt();
-    install_idt();
-    install_paging();
+    pdt[0] = (__u32)pt1 + 3;
+    pdt[1] = (__u32)pt2 + 3;
+    for (int i = 0; i < 512; i++) {
+        pt1[i] = 0x1000 * i + 3;
+        pt2[i] = 0x1000 * (i+512) + 3;
+    }
 
-    int *p = 0xffffffff;
-    *p = 233;
-    printk("Hello World!\n");
+    /* replace pml4t directly, as uefi has already enabled
+     * paging for us */
+    asm volatile (
+        "movq %%rax, %0     \n\t"
+        "movq %%cr3, %%rax  \n\t"
+        ::"m"(pml4t));
 }
