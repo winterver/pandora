@@ -33,6 +33,7 @@
 #include <port.h>
 #include <types.h>
 
+__attribute__((aligned(0x10)))
 static __u64 gdt[] = {
     /* On x64, only the higher half of the second (from left to right)
      * byte and entire third byte are meaningful, they are Flags and
@@ -70,40 +71,45 @@ static void install_gdt() {
     asm volatile ("lgdt %0"::"m"(gdtr));
 
     reload_segments();
-
-    gdtr.size = 0;
-    gdtr.pgdt = 0;
-    asm volatile ("sgdt %0":"=m"(gdtr));
-
-    for (int i = 0; i < ((gdtr.size + 1) / 8); i++) {
-        __u64 entry = gdtr.pgdt[i];
-        __u8 access = (entry >> 40) & 0xff;
-        __u8 flags = (entry >> 52) & 0x0f;
-        printk("entry %d access = %hhx, flags = %hhx\n", i, access, flags);
-    }
-
-    __u16 cs, ds, ss, es, fs, gs;
-    asm volatile ("movw %%cs, %0":"=m"(cs));
-    asm volatile ("movw %%ds, %0":"=m"(ds));
-    asm volatile ("movw %%ss, %0":"=m"(ss));
-    asm volatile ("movw %%es, %0":"=m"(es));
-    asm volatile ("movw %%fs, %0":"=m"(fs));
-    asm volatile ("movw %%gs, %0":"=m"(gs));
-    printk("cs = %hx\n", cs);
-    printk("ds = %hx\n", ds);
-    printk("ss = %hx\n", ss);
-    printk("es = %hx\n", es);
-    printk("fs = %hx\n", fs);
-    printk("gs = %hx\n", gs);
 }
+
+
+typedef struct {
+    __u16 isr_lo;
+    __u16 cs;
+    __u8  ist;        // The IST in the TSS that the CPU will load into RSP; set to zero for now
+    __u8  attr;
+    __u16 isr_mid;
+    __u32 isr_hi;
+    __u32 reserved;
+} __attribute__((packed)) idt_entry_t;
+
+__attribute__((aligned(0x10)))
+static idt_entry_t idt[256] = {
+    0
+};
+
+static void install_idt() {
+    struct {
+        __u16       size;
+        idt_entry_t *pidt;
+    } __attribute__((packed)) idtr;
+
+    idtr.size = sizeof(idt);
+    idtr.pidt = idt;
+    asm volatile ("lidt %0"::"m"(idtr));
+}
+
 
 void kmain(struct bootinfo* bi) {
     init_video(bi);
-    printk("Hello World!\n");
 
     // gdt, irq, paging, my own long mode
     // allocator, process, scheduler,
     // mirco kernel!!
-    
+
     install_gdt();
+    install_idt();
+
+    printk("Hello World!\n");
 }
