@@ -32,6 +32,16 @@
 #include <types.h>
 
 __attribute__((naked))
+static void page_fault() {
+    printk("page_fault!\n");
+    asm volatile (
+        "cli      \n"
+    "1:         \n\t"
+        "hlt    \n\t"
+        "jmp 1b \n\t");
+}
+
+__attribute__((naked))
 static void syscall() {
     printk("0x80 syscall!\n");
     asm volatile ("iretq");
@@ -61,6 +71,7 @@ void install_idt() {
         .isr_hi     = ((__u64)isr>>32),         \
         .reserved   = 0,                        \
     };
+    ISR(0x0e, page_fault, 0x8f);
     ISR(0x80, syscall, 0x8e);
 
     struct {

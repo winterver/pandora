@@ -2,7 +2,7 @@ CC = gcc
 LD = ld
 
 CFLAGS = -std=gnu11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
-         -O2 -ffreestanding -fno-asynchronous-unwind-tables \
+         -O2 -fPIE -ffreestanding -fno-asynchronous-unwind-tables \
 		 -fno-stack-protector -Werror=format
 LDFLAGS = -znoexecstack -Tsrc/linker.ld
 
