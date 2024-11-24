@@ -21,30 +21,51 @@
  */
 
 /**
- * File              : main.c
+ * File              : gdt.c
  * Author            : winterver
- * Date              : 2024.9.26~
+ * Date              : 2024.11.24
  * Last Modified Date: 2024.11.24
  * Last Modified By  : winterver
  */
 
-#include <boot.h>
-#include <printk.h>
 #include <types.h>
 
-void install_gdt();
-void install_idt();
+__attribute__((naked))
+static void reload_segments() {
+    asm volatile (
+        "pushq $0x08              \n\t"
+        "leaq .reload(%rip), %rax \n\t"
+        "pushq %rax               \n\t"
+        "lretq                      \n"
+    ".reload:                     \n\t"
+        "movw $0x10, %ax          \n\t"
+        "movw %ax, %ds            \n\t"
+        "movw %ax, %ss            \n\t"
+        "movw %ax, %es            \n\t"
+        "movw %ax, %fs            \n\t"
+        "movw %ax, %gs            \n\t"
+        "ret                          ");
+}
 
-void kmain(struct bootinfo* bi) {
-    init_video(bi);
+__attribute__((aligned(0x10)))
+static __u64 gdt[] = {
+    /* On x64, only the higher half of the second (from left to right)
+     * byte and entire third byte are meaningful, they are Flags and
+     * Access Byte respectively. The other parts are ignored. */
+    0x0000000000000000, /* NULL placeholder */
+    0x00a09b0000000000, /* code segment */
+    0x00c0930000000000, /* data segment */
+};
 
-    // gdt, irq, paging, my own long mode
-    // allocator, process, scheduler,
-    // mirco kernel!!
+void install_gdt() {
+    struct {
+        __u16 size;
+        __u64 *pgdt;
+    } __attribute__((packed)) gdtr;
 
-    install_gdt();
-    install_idt();
+    gdtr.size = sizeof(gdt) - 1;
+    gdtr.pgdt = gdt;
+    asm volatile ("lgdt %0"::"m"(gdtr));
 
-    asm volatile ("int $0x80");
-    printk("Hello World!\n");
+    reload_segments();
 }
