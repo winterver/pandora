@@ -74,10 +74,17 @@ static void install_gdt() {
 }
 
 
+__attribute__((naked))
+static void syscall() {
+    printk("0x80 syscall!\n");
+    asm volatile ("iretq");
+}
+
+
 typedef struct {
     __u16 isr_lo;
     __u16 cs;
-    __u8  ist;        // The IST in the TSS that the CPU will load into RSP; set to zero for now
+    __u8  ist;
     __u8  attr;
     __u16 isr_mid;
     __u32 isr_hi;
@@ -85,11 +92,22 @@ typedef struct {
 } __attribute__((packed)) idt_entry_t;
 
 __attribute__((aligned(0x10)))
-static idt_entry_t idt[256] = {
-    0
-};
+static idt_entry_t idt[256];
+
+#define ISR(index, isr, _attr)                  \
+    idt[index] = (idt_entry_t) {                \
+        .isr_lo     = (__u64)isr & 0xffff,      \
+        .cs         = 0x08,                     \
+        .ist        = 0,                        \
+        .attr       = _attr,                    \
+        .isr_mid    = ((__u64)isr>>16) & 0xffff,\
+        .isr_hi     = ((__u64)isr>>32),         \
+        .reserved   = 0,                        \
+    };
 
 static void install_idt() {
+    ISR(0x80, syscall, 0x8e);
+
     struct {
         __u16       size;
         idt_entry_t *pidt;
@@ -111,5 +129,6 @@ void kmain(struct bootinfo* bi) {
     install_gdt();
     install_idt();
 
+    asm volatile ("int $0x80");
     printk("Hello World!\n");
 }
