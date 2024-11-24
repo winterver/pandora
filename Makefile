@@ -13,10 +13,10 @@ OBJS = $(patsubst %.c,%.o,	\
        $(SRCS)))
 TARGET = pandora.bin
 
-#QEMU = qemu-system-x86_64.exe
-#QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
-QEMU = qemu-system-x86_64
-QFLAGS = -nographic -net none -bios /usr/share/ovmf/x64/OVMF.4m.fd
+QEMU = qemu-system-x86_64.exe
+QFLAGS = -net none -bios /usr/share/ovmf/OVMF.fd
+#QEMU = qemu-system-x86_64
+#QFLAGS = -nographic -net none -bios /usr/share/ovmf/x64/OVMF.4m.fd
 
 all: subprojs $(TARGET)
 
