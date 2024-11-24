@@ -24,12 +24,12 @@
  * File              : boot.h
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.22
+ * Last Modified Date: 2024.11.24
  * Last Modified By  : winterver
  */
 
-#ifndef _PANDORA_BOOTINFO_H_
-#define _PANDORA_BOOTINFO_H_
+#ifndef _PANDORA_BOOT_H_
+#define _PANDORA_BOOT_H_
 
 #define VID_FORMAT_UNKNOWN  0
 #define VID_FORMAT_RGB32    1
