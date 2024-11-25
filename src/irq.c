@@ -33,7 +33,7 @@
 
 __attribute__((naked))
 static void page_fault() {
-    //printk("page_fault!\n");
+    printk("page_fault!\n");
     asm volatile (
         "cli      \n"
     "1:         \n\t"
