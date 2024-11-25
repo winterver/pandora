@@ -3,7 +3,7 @@ LD = ld
 
 CFLAGS = -std=gnu11 -nostdinc -nostdlib -Iinclude -pedantic -Wall -Wextra \
          -m32 -O2 -fPIE -ffreestanding -fno-asynchronous-unwind-tables \
-		 -fno-stack-protector -Werror=format
+		 -fno-stack-protector -mgeneral-regs-only
 LDFLAGS = -melf_i386 -znoexecstack -Tsrc/linker.ld
 
 SRCS = $(wildcard src/*.S	\
@@ -14,7 +14,7 @@ OBJS = $(patsubst %.c,%.o,	\
 TARGET = pandora.bin
 
 QEMU = qemu-system-x86_64.exe
-QFLAGS = -nographic -kernel pandora.bin
+QFLAGS = -nographic
 
 all: $(TARGET)
 

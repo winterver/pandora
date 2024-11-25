@@ -28,34 +28,18 @@
  * Last Modified By  : winterver
  */
 
-    .set MAGIC, 0x1badb002
-    .set FLAGS, 0b011
-    .set CHKSM, -MAGIC-FLAGS
-
-    .section .multiboot
-    .align 4
-    .long MAGIC
-    .long FLAGS
-    .long CHKSM
-    .long 0,0,0,0
-
     .section .bss
     .align 16
     .skip 16384 # 16 KiB
 stack_top:
-
-    .section .data
-multiboot_info_ptr:
-    .long 0
 
     .section .text
     .global _start
     .type _start, @function
 _start:
     mov $stack_top, %ebp
-    mov $stack_top, %esp
+    mov %ebp, %esp
 
-    movl %ebx, (multiboot_info_ptr)
     call kmain
 
     /* In case kmain() retunrns */
