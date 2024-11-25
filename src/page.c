@@ -51,7 +51,6 @@ void install_paging() {
     /* replace pml4t directly, as uefi has already enabled
      * paging for us */
     asm volatile (
-        "movq %%rax, %0     \n\t"
-        "movq %%cr3, %%rax  \n\t"
-        ::"m"(pml4t));
+        "movq %%rax, %%cr3  \n\t"
+        ::"a"(pml4t));
 }
