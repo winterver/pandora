@@ -24,16 +24,16 @@
  * File              : printk.c
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.23
+ * Last Modified Date: 2024.11.25
  * Last Modified By  : winterver
  */
 
-#include <boot.h>
 #include <printk.h>
 #include <string.h>
 #include <vsnprintf.h>
 #include <port.h>
 
+/*
 #define FW 8
 #define FH 16
 #define GAP 1
@@ -86,7 +86,7 @@ static void nextcolumn(int col) {
         if (x > (w - FW)) nextline();
     }
 }
-
+*/
 
 /* COM1 */
 #define PORT 0x3f8
@@ -125,6 +125,7 @@ char serial_getch() {
 
 
 static void putc(char c) {
+    /*
     if (vidinit) {
         if (c == '\r') { x = 0; return; }
         if (c == '\t') { nextcolumn(8); return; }
@@ -132,6 +133,7 @@ static void putc(char c) {
         put(x, y, c);
         nextcolumn(1);
     }
+    */
     if (serinit)
         serial_putc(c);
 }

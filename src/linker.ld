@@ -24,7 +24,7 @@
  * File              : linker.ld
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.22
+ * Last Modified Date: 2024.11.25
  * Last Modified By  : winterver
  */
 
@@ -48,6 +48,7 @@ SECTIONS
 
     .text BLOCK(4K) : ALIGN(4K)
     {
+        *(.multiboot)
         *(.text)
     }
 

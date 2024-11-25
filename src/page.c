@@ -24,39 +24,11 @@
  * File              : page.c
  * Author            : winterver
  * Date              : 2024.11.24
- * Last Modified Date: 2024.11.24
+ * Last Modified Date: 2024.11.25
  * Last Modified By  : winterver
  */
 
 #include <types.h>
 
-static __u64 pml4t[512] __attribute__((aligned(0x1000)));
-static __u64 pdpt[512] __attribute__((aligned(0x1000)));
-// 1 pdpt maps 1G, only pdpt[0..31] are used
-// length must be 512 to fit in page.
-
-static __u64 pdt[32][512] __attribute__((aligned(0x1000)));
-static __u64 pt[32][512][512] __attribute__((aligned(0x1000)));
-
 void install_paging() {
-    pml4t[0] = (__u32)pdpt + 3;
-    for (int i = 0; i < 32; i++) {
-        pdpt[i] = (__u32)pdt[i] + 3;
-    }
-
-    // initialize 0-32G
-    for (__u64 i = 0; i < 32; i++) {
-        for (__u64 j = 0; j < 512; j++) {
-            pdt[i][j] = (__u32)pt[i][j] + 3;
-            for (__u64 k = 0; k < 512; k++) {
-                pt[i][j][k] = (i*512*512 + j*512 + k) * 0x1000 + 3;
-            }
-        }
-    }
-
-    /* replace pml4t directly, as uefi has already enabled
-     * paging for us */
-    asm volatile (
-        "movq %%rax, %%cr3  \n\t"
-        ::"a"(pml4t));
 }

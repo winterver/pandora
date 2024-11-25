@@ -24,7 +24,7 @@
  * File              : gdt.c
  * Author            : winterver
  * Date              : 2024.11.24
- * Last Modified Date: 2024.11.24
+ * Last Modified Date: 2024.11.25
  * Last Modified By  : winterver
  */
 
@@ -33,10 +33,7 @@
 __attribute__((naked))
 static void reload_segments() {
     asm volatile (
-        "pushq $0x08              \n\t"
-        "leaq .reload(%rip), %rax \n\t"
-        "pushq %rax               \n\t"
-        "lretq                      \n"
+        "jmp $0x8,$.reload        \n\t"
     ".reload:                     \n\t"
         "movw $0x10, %ax          \n\t"
         "movw %ax, %ds            \n\t"
@@ -49,12 +46,9 @@ static void reload_segments() {
 
 __attribute__((aligned(0x10)))
 static __u64 gdt[] = {
-    /* On x64, only the higher half of the second (from left to right)
-     * byte and entire third byte are meaningful, they are Flags and
-     * Access Byte respectively. The other parts are ignored. */
     0x0000000000000000, /* NULL placeholder */
-    0x00a09b0000000000, /* code segment */
-    0x00c0930000000000, /* data segment */
+    0x00cf9b000000ffff, /* code segment */
+    0x00cf93000000ffff, /* data segment */
 };
 
 void install_gdt() {

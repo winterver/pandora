@@ -24,11 +24,10 @@
  * File              : main.c
  * Author            : winterver
  * Date              : 2024.9.26~
- * Last Modified Date: 2024.11.24
+ * Last Modified Date: 2024.11.25
  * Last Modified By  : winterver
  */
 
-#include <boot.h>
 #include <printk.h>
 #include <types.h>
 
@@ -36,8 +35,8 @@ void install_gdt();
 void install_idt();
 void install_paging();
 
-void kmain(struct bootinfo* bi) {
-    init_video(bi);
+void kmain() {
+    init_serial();
 
     // gdt, irq, paging, my own long mode
     // allocator, process, scheduler,
@@ -48,5 +47,4 @@ void kmain(struct bootinfo* bi) {
     install_paging();
 
     printk("Hello World!\n");
-    printk("vid_addr = %p\n", bi->vid_addr);
 }
