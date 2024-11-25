@@ -50,7 +50,7 @@ void kmain(struct bootinfo* bi) {
     //int *p = 0x400000-4; // not triggering page fault, trap in while(1);
     int *p = 0x400000; // triggers page fault, trap in halt loop in page_fault(), low cpu usage
     *p = 233;
-    while(1);
 
     printk("Hello World!\n");
+    //printk("vid_addr = %p\n", bi->vid_addr);
 }

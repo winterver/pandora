@@ -34,18 +34,28 @@ static __u64 pml4t[512] __attribute__((aligned(0x1000)));
 static __u64 pdpt[512] __attribute__((aligned(0x1000)));
 
 static __u64 pdt[512] __attribute__((aligned(0x1000)));
+static __u64 pt0[512] __attribute__((aligned(0x1000)));
 static __u64 pt1[512] __attribute__((aligned(0x1000)));
+
 static __u64 pt2[512] __attribute__((aligned(0x1000)));
+static __u64 pt3[512] __attribute__((aligned(0x1000)));
 
 void install_paging() {
     pml4t[0] = (__u32)pdpt + 3;
     pdpt[0] = (__u32)pdt + 3;
 
-    pdt[0] = (__u32)pt1 + 3;
-    pdt[1] = (__u32)pt2 + 3;
+    pdt[0] = (__u32)pt0 + 3;
+    pdt[1] = (__u32)pt1 + 3;
     for (int i = 0; i < 512; i++) {
-        pt1[i] = 0x1000 * i + 3;
-        pt2[i] = 0x1000 * (i+512) + 3;
+        pt0[i] = 0x1000 * i + 3;
+        pt1[i] = 0x1000 * (i+512) + 3;
+    }
+
+    pdt[2] = (__u32)pt2 + 3;
+    pdt[3] = (__u32)pt3 + 3;
+    for (int i = 0; i < 512; i++) {
+        pt2[i] = 0x80000000 + 0x1000 * i + 3;
+        pt3[i] = 0x80000000 + 0x1000 * (i+512) + 3;
     }
 
     /* replace pml4t directly, as uefi has already enabled

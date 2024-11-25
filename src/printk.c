@@ -62,7 +62,8 @@ static int x, y;
 void init_video(struct bootinfo* bi) {
     memset(bi->vid_addr, 0, bi->vid_size);
 
-    vid = bi->vid_addr;
+    //vid = bi->vid_addr;
+    vid = 0x400000;
     ppl = bi->vid_pps;
     fg = 0xffffffff;
     bg = 0;
